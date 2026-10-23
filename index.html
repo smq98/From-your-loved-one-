@@ -1,16 +1,256 @@
-const VAULT_CONFIG = {
-  initialPasscode: "2024", // Change to the code/date she knows!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Your Loved One ❤️</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fdf2f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(214, 51, 132, 0.15);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #d63384;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 25px;
+        }
+        .question-box {
+            display: none;
+        }
+        .question-box.active {
+            display: block;
+        }
+        .question-text {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background-color: #fff0f3;
+            border: 2px solid #ffccd5;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #d63384;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+        .option-btn:hover {
+            background-color: #d63384;
+            color: white;
+            border-color: #d63384;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ffccd5;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-color: #d63384;
+        }
+        .submit-btn {
+            background-color: #d63384;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #b8256f;
+        }
+        .error-msg {
+            color: #e63946;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        .secret-message {
+            display: none;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #444;
+            text-align: left;
+            background: #fff5f7;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px dashed #d63384;
+        }
+    </style>
+</head>
+<body>
 
-  questions: [
-    {
-      question: "Where did we go on our first date?",
-      options: ["Coffee Shop", "The Beach", "The Restaurant", "The Cinema"],
-      correctIndex: 1
-    }
-  ],
+    <div class="container" id="main-container">
+        <h1>🔒 Love Vault</h1>
+        <div class="subtitle">Complete the quiz & enter the master passcode to unlock!</div>
 
-  letterTitle: "To My Love,",
-  letterBody: [
-    "Write your personal letter here..."
-  ]
-};
+        <!-- Quiz Container -->
+        <div id="quiz-container">
+            <div id="question-holder"></div>
+        </div>
+
+        <!-- Passcode Container -->
+        <div id="passcode-container" style="display: none;">
+            <div class="question-text">✨ You passed the quiz! Now enter the final master passcode (100726) to open the vault:</div>
+            <input type="text" id="passcode-input" placeholder="Enter passcode...">
+            <br>
+            <button class="submit-btn" onclick="checkPasscode()">Unlock Vault ❤️</button>
+            <div id="error-msg" class="error-msg">Incorrect passcode! Try again.</div>
+        </div>
+
+        <!-- Secret Message Container -->
+        <div id="secret-container" class="secret-message">
+            <h2 style="color: #d63384; text-align: center; margin-top: 0;">❤️ Vault Unlocked! ❤️</h2>
+            <p>My dearest love,</p>
+            <p>If you are reading this, you successfully unlocked the vault! Every single question here represents a small piece of our beautiful story together. Thank you for being my happiness, my peace, and my favorite part of every single day.</p>
+            <p>I love you endlessly, forever and always.</p>
+            <p style="text-align: right; font-weight: bold; color: #d63384;">— Yours truly ❤️</p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "1. When is my birthday?",
+                options: ["14 December 2010", "16 December 2010"],
+                correct: [0] // Index 0 is correct
+            },
+            {
+                q: "2. When is our anniversary?",
+                options: ["10 July 2026", "13 July 2026"],
+                correct: [1]
+            },
+            {
+                q: "3. What was the first thing I noticed about you when we met?",
+                options: ["Your looks", "Your personality", "How you talk"],
+                correct: [1]
+            },
+            {
+                q: "4. What is my absolute favorite food?",
+                options: ["Pizza", "Pasta", "Rice", "Burger"],
+                correct: [0]
+            },
+            {
+                q: "5. What is my go-to drink or coffee order?",
+                options: ["Orange juice", "Watermelon juice", "Coffee", "Soft drinks"],
+                correct: [1]
+            },
+            {
+                q: "6. If I could travel anywhere in the world tomorrow, where would I go?",
+                options: ["Barcelona, Spain", "New York, USA", "Maldives", "Dubai, United Arab Emirates"],
+                correct: [0]
+            },
+            {
+                q: "7. How do I usually like to relax after a long day?",
+                options: ["Talking to the girl I love", "Relaxing", "Watching a show"],
+                correct: [0]
+            },
+            {
+                q: "8. What is my favorite memory with you so far?",
+                options: ["Our first call", "The moment we told each other 'I love you'", "Every single moment and second spent together"],
+                correct: [2]
+            },
+            {
+                q: "9. What is something that always makes me smile no matter what?",
+                options: ["Seeing your text", "Hearing your voice", "You sending me a kiss"],
+                correct: [0, 1, 2] // All correct
+            },
+            {
+                q: "10. What is my favorite thing about our relationship?",
+                options: ["How deeply we love each other", "How we always support each other", "The strong connection we share"],
+                correct: [0]
+            },
+            {
+                q: "11. What is our ultimate dream couple activity?",
+                options: ["Late night drive and coffee", "Getting ice cream together", "Watching a movie together on a movie night", "Fancy dinner dates"],
+                correct: [1, 2] // Both B and C are correct
+            },
+            {
+                q: "12. Do you love me?",
+                options: ["More than words can say!", "To the moon and back, endlessly!", "Forever and always, no matter what!"],
+                correct: [0, 1, 2] // All correct
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        function loadQuestion() {
+            const holder = document.getElementById("question-holder");
+            if (currentQuestionIndex < questions.length) {
+                let qData = questions[currentQuestionIndex];
+                let html = `<div class="question-text">${qData.q}</div><div class="options">`;
+                qData.options.forEach((opt, idx) => {
+                    html += `<button class="option-btn" onclick="selectOption(${idx})">${String.fromCharCode(65 + idx)}) ${opt}</button>`;
+                });
+                html += `</div>`;
+                holder.innerHTML = html;
+            } else {
+                // Quiz finished, show passcode screen
+                document.getElementById("quiz-container").style.display = "none";
+                document.getElementById("passcode-container").style.display = "block";
+            }
+        }
+
+        function selectOption(selectedIdx) {
+            let qData = questions[currentQuestionIndex];
+            if (qData.correct.includes(selectedIdx)) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                alert("Not quite! Try another option ❤️");
+            }
+        }
+
+        function checkPasscode() {
+            let code = document.getElementById("passcode-input").value.trim();
+            if (code === "100726" || code === "10/07/2026") {
+                document.getElementById("passcode-container").style.display = "none";
+                document.getElementById("secret-container").style.display = "block";
+            } else {
+                document.getElementById("error-msg").style.display = "block";
+            }
+        }
+
+        // Initialize first question
+        loadQuestion();
+    </script>
+
+</body>
+</html>
+
